@@ -18,6 +18,13 @@ constructor(private readonly Client:RenderClient){}
             if(!Data) return {Status:false,Message:"token is not valid"}
             console.log(Data)
 
+
+            //2 Save all the Data in DB for the further use case
+
+
+            //3  Create the Unique Id
+            
+
     }
     catch(err){
         console.log(err)
