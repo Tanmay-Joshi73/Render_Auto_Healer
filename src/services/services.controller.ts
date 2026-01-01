@@ -27,6 +27,12 @@ const result= await this.Main.listUnhealthyServices(renderApiKey)
 
 return result
 }
+@Get('/Overview')
+async Getoverview():Promise<any>{
+  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
+  const result=await this.Main.getServiceOverview(renderApiKey)
+  return result
+}
 }
 
 

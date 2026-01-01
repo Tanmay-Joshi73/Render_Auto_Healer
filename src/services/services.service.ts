@@ -6,21 +6,30 @@ export class ServicesService {
 constructor(private readonly client:RenderClient){}
 
      // 1️⃣ List available Render services for the user
-  async listAvailableServices(renderApiKey: string) {
-    if(!renderApiKey) throw new BadRequestException("Api key is not provided")
-    const services = await this.client.verifyService(renderApiKey); //This will return the Full Arrry of Curosr
-    if (!services) {
-      throw new BadRequestException('Invalid Render API key');
-    }
-
-    
-    return services.filter(
-      (service: any) => service.type === 'web_service',
-    );
+ async listAvailableServices(renderApiKey: string) {
+  if (!renderApiKey) {
+    throw new BadRequestException('API key is not provided');
   }
 
+  const services = await this.client.verifyService(renderApiKey);
+  console.log(services)
+  if (!services) {
+    throw new BadRequestException('Invalid Render API key');
+  }
+
+  // UI-safe mapping (optional)
+  return services.map((service: any) => ({
+    renderServiceId: service.id,
+    name: service.name,
+    type: service.type,
+    status: service.status,
+    dashboardUrl: service.dashboardUrl,
+    updatedAt: service.updatedAt,
+  }));
+}
+
     //This will return the Specified service name
-  async getServiceByName(renderApiKey: string, serviceName: string) {
+async getServiceByName(renderApiKey: string, serviceName: string) {
   if (!renderApiKey) {
     throw new BadRequestException('API key is not provided');
   }
@@ -28,18 +37,18 @@ constructor(private readonly client:RenderClient){}
     throw new BadRequestException('Service name is required');
   }
 
-  const services = await this.client.verifyService(renderApiKey);
-
-  const service = services.find(
-    (s: any) => s.name === serviceName && s.type === 'web_service',
+  const service = await this.client.getWebServiceByName(
+    renderApiKey,
+    serviceName,
   );
 
   if (!service) {
     throw new BadRequestException('Service with this name not found');
   }
 
-  return service;
+  return service; // FULL object
 }
+
 
 
 
@@ -56,6 +65,28 @@ async listUnhealthyServices(renderApiKey: string) {
       service.type === 'web_service' &&
       ['failed', 'crashed'].includes(service.status),
   );
+}
+
+  //This will group all the services by states
+async getServiceOverview(renderApiKey: string) {
+  if (!renderApiKey) {
+    throw new BadRequestException('API key is not provided');
+  }
+
+  const services = await this.client.verifyService(renderApiKey);
+
+  if (!services) {
+    throw new BadRequestException('Invalid Render API key');
+  }
+
+  return {
+    total: services.length,
+    active: services.filter(s => s.suspended === 'not_suspended'),
+    suspended: services.filter(s => s.suspended === 'suspended'),
+    unhealthy: services.filter(s =>
+      ['failed', 'crashed'].includes(s.status),
+    ),
+  };
 }
 
 

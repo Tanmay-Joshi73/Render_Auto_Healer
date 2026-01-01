@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 @Injectable()
 export class RenderClient {
-  async verifyService(token: string) {
-    try {
+   async verifyService(token: string) {
+  try {
     const res = await axios.get(
       'https://api.render.com/v1/services',
       {
@@ -12,31 +12,18 @@ export class RenderClient {
         },
       },
     );
-    for(let i of res.data){
-      console.log(i)
-    }
-    
-    return res.data
-      .map((item: any) => item.service)
-      .filter(
-        (service: any) =>
-          service.type === 'web_service' &&
-          service.suspended === 'not_suspended',
-      )
-      .map((service: any) => ({
-        renderServiceId: service.id,
-        name: service.name,
-        type: service.type,
-        dashboardUrl: service.dashboardUrl,
-        status: 'active',
-      }));
-  } 
-  catch {
+
+    // Return ALL services with FULL data
+    return res.data.map((item: any) => item.service);
+
+  } catch (error) {
     return null;
   }
+}
+
 
   
-}
+
 //This function will return the only 1 service that matched the name
 async getWebServiceByName(
   token: string,
@@ -61,16 +48,7 @@ async getWebServiceByName(
           service.suspended === 'not_suspended',
       );
 
-    if (!service) {
-      return null;
-    }
-
-    return {
-      renderServiceId: service.id,
-      name: service.name,
-      type: service.type,
-      dashboardUrl: service.dashboardUrl,
-    };
+    return service || null; // 🔥 FULL object
   } catch {
     return null;
   }
