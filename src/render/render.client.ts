@@ -12,7 +12,10 @@ export class RenderClient {
         },
       },
     );
-
+    for(let i of res.data){
+      console.log(i)
+    }
+    
     return res.data
       .map((item: any) => item.service)
       .filter(
