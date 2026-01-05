@@ -1,4 +1,5 @@
 import { Injectable,BadRequestException} from '@nestjs/common';
+import { setDefaultAutoSelectFamilyAttemptTimeout } from 'net';
 import { RenderClient } from 'src/render/render.client';
 @Injectable()
 export class ServicesService {
@@ -96,15 +97,17 @@ async getServiceOverview(renderApiKey: string) {
     throw new BadRequestException('API key is not provided');
   }
   if (!ServiceName) {
-    throw new BadRequestException('Service ID is required');
+    throw new BadRequestException('Service Name is required');
   }
 
   //This will give the whole details of the services that can agian use to find the service id and then re-deploy it.
   const serviceDetails=await this.getServiceByName(renderApiKey,ServiceName)
   const serviceId=serviceDetails.id
-  const result=await this.client.redeployService(renderApiKey,serviceId)
-  return result;
-  
+  // const result=await this.client.redeployService(renderApiKey,serviceId)
+  // return result;
+
+  return "hey work is done bro"
+ 
   
   // if (!result) {
   //   throw new BadRequestException('Failed to redeploy service');
@@ -115,8 +118,24 @@ async getServiceOverview(renderApiKey: string) {
   //   serviceId,
   // };
 }
+async createUptimeService(RenderApiKey:string,ServiceName:string){
+if(!ServiceName){
+ throw new BadRequestException('Service Name is required');
+}
 
 
+// This will return the service id by checking the service name of the services
+const serviceId=await this.getServiceByName(RenderApiKey,ServiceName); //Store in DB
+const TokenId=122212  ///This will be create by any type of crypto 
+// console.log(serviceId)
+//Example-https://render.com/services/monitor/1222221
+const URL=`https://render.com/services/monitor/${TokenId}`
+
+}
+
+
+//This will check the request or web event from the UptimeRobot
+async Monitor():
 
   
   }

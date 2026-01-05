@@ -34,11 +34,18 @@ async Getoverview():Promise<any>{
   return result
 }
 @Post('/Redeploy')
-async Redploy(@Body() Data:{ServiceName:string}):Promise<void>{
+async Redploy(@Body() Data:{ServiceName:string}):Promise<any>{
   const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
   const {ServiceName}={...Data}
   const result=await this.Main.redeployService(renderApiKey,ServiceName)
   return result;
+}
+@Post("/CreateMonitorLink")
+async CreateLink(@Body() Data:{ServiceName:string}):Promise<any>{
+  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
+  const {ServiceName}={...Data}
+  const result=await this.Main.createUptimeService(renderApiKey,ServiceName)
+  return result
 }
 }
 
