@@ -33,6 +33,13 @@ async Getoverview():Promise<any>{
   const result=await this.Main.getServiceOverview(renderApiKey)
   return result
 }
+@Post('/Redeploy')
+async Redploy(@Body() Data:{ServiceName:string}):Promise<void>{
+  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
+  const {ServiceName}={...Data}
+  const result=await this.Main.redeployService(renderApiKey,ServiceName)
+  return result;
+}
 }
 
 

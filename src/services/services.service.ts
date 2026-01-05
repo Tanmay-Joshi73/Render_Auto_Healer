@@ -91,25 +91,30 @@ async getServiceOverview(renderApiKey: string) {
 
 
   //This will Redeploy the service 
-//   async redeployService(renderApiKey: string, serviceId: string) {
-//   if (!renderApiKey) {
-//     throw new BadRequestException('API key is not provided');
-//   }
-//   if (!serviceId) {
-//     throw new BadRequestException('Service ID is required');
-//   }
+  async redeployService(renderApiKey: string, ServiceName: string) {
+  if (!renderApiKey) {
+    throw new BadRequestException('API key is not provided');
+  }
+  if (!ServiceName) {
+    throw new BadRequestException('Service ID is required');
+  }
 
-//   const result = await this.client.redeployService(renderApiKey, serviceId);
+  //This will give the whole details of the services that can agian use to find the service id and then re-deploy it.
+  const serviceDetails=await this.getServiceByName(renderApiKey,ServiceName)
+  const serviceId=serviceDetails.id
+  const result=await this.client.redeployService(renderApiKey,serviceId)
+  return result;
+  
+  
+  // if (!result) {
+  //   throw new BadRequestException('Failed to redeploy service');
+  // }
 
-//   if (!result) {
-//     throw new BadRequestException('Failed to redeploy service');
-//   }
-
-//   return {
-//     message: 'Service redeployment triggered successfully',
-//     serviceId,
-//   };
-// }
+  // return {
+  //   message: 'Service redeployment triggered successfully',
+  //   serviceId,
+  // };
+}
 
 
 
