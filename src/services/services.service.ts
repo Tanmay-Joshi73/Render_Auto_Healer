@@ -135,7 +135,20 @@ const URL=`https://render.com/services/monitor/${TokenId}`
 
 
 //This will check the request or web event from the UptimeRobot
-async Monitor():
+async Monitor(tokenid:string):Promise<any>{
+  //Here tokenid is stored in the DB which releted to the specified Deployment
+  const serviceName='Deployment' /// this will fetch from the DB when the Db accsess is provided
+  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y'
+  const serviceDetails=await this.getServiceByName(renderApiKey,serviceName)
+  const Details={
+    serviceId:serviceDetails.id,
+    repo:serviceDetails.repo,
+    name:serviceName || serviceDetails.name,
+    url:serviceDetails.serviceDetails.url
+  }
+  return Details;
+
+}
 
   
   }

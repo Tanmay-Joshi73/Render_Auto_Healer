@@ -3,7 +3,9 @@ import { Body } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { Get,Post } from '@nestjs/common';
 import { Req } from '@nestjs/common';
+import { Request } from 'express';
 import { get } from 'axios';
+import { Param } from '@nestjs/common';
 @Controller('services')
 export class ServicesController {
   constructor(private readonly Main: ServicesService) {}
@@ -46,6 +48,13 @@ async CreateLink(@Body() Data:{ServiceName:string}):Promise<any>{
   const {ServiceName}={...Data}
   const result=await this.Main.createUptimeService(renderApiKey,ServiceName)
   return result
+}
+@Post('/Monitor/:token')
+async monitorService(@Param() requestData:{token:string}):Promise<any>{
+const Token=requestData.token;
+const reuslt=await this.Main.Monitor(Token)
+return reuslt;
+
 }
 }
 
