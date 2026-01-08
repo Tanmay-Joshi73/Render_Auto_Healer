@@ -5,11 +5,13 @@ import { RegisterModule } from './register/register.module';
 import { ConfigModule } from '@nestjs/config';
 import { RenderModule } from './render/render.module';
 import { ServicesModule } from './services/services.module';
+import { DatabaseModule } from './database/database.module';
 @Module({
   imports: [RegisterModule,
     ConfigModule.forRoot({isGlobal:true}),
     RenderModule,
-    ServicesModule
+    ServicesModule,
+    DatabaseModule
   ],
   controllers: [AppController],
   providers: [AppService],
