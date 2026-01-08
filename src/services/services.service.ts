@@ -103,10 +103,10 @@ async getServiceOverview(renderApiKey: string) {
   //This will give the whole details of the services that can agian use to find the service id and then re-deploy it.
   const serviceDetails=await this.getServiceByName(renderApiKey,ServiceName)
   const serviceId=serviceDetails.id
-  // const result=await this.client.redeployService(renderApiKey,serviceId)
-  // return result;
+  const result=await this.client.redeployService(renderApiKey,serviceId)
+  return result;
 
-  return "hey work is done bro"
+  // return "hey work is done bro"
  
   
   // if (!result) {
@@ -146,7 +146,13 @@ async Monitor(tokenid:string):Promise<any>{
     name:serviceName || serviceDetails.name,
     url:serviceDetails.serviceDetails.url
   }
-  return Details;
+  const redeployService=await this.redeployService(renderApiKey,serviceName)
+  console.log(redeployService)
+  const response={
+    status:true,
+    message:redeployService
+  }
+  return response;
 
 }
 
