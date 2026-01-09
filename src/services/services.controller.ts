@@ -12,7 +12,7 @@ import { userInfo } from 'os';
 @Controller('services')
 export class ServicesController {
   constructor(private readonly Main: ServicesService) {}
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
    @Get('available')
   async getAvailableServices(@Req() req: any) {
     return this.Main.listAvailableServices(req.user.apikey);
@@ -45,8 +45,9 @@ async Redploy(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
 }
 @Post("/CreateMonitorLink")
 async CreateLink(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
+  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y'
   const {ServiceName}={...Data}
-  const result=await this.Main.createUptimeService(req.user.apikey,ServiceName)
+  const result=await this.Main.createUptimeService(renderApiKey,ServiceName)
   return result
 }
 @Post('/Monitor/:token')
