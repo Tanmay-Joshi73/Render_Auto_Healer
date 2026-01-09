@@ -6,47 +6,47 @@ import { Req } from '@nestjs/common';
 import { Request } from 'express';
 import { get } from 'axios';
 import { Param } from '@nestjs/common';
+import { AuthGuard } from 'src/Auth/auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { userInfo } from 'os';
 @Controller('services')
 export class ServicesController {
   constructor(private readonly Main: ServicesService) {}
+  @UseGuards(AuthGuard)
    @Get('available')
   async getAvailableServices(@Req() req: any) {
-    // const renderApiKey = req.user.renderApiKey ||'rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y'; // from auth middleware
-    const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y'
-    return this.Main.listAvailableServices(renderApiKey);
+    return this.Main.listAvailableServices(req.user.apikey);
   }
   @Get('GetService')
-  async GetOneService(@Body()Data:{serviceName:string}):Promise<any>{
-  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
-  const {serviceName} ={...Data}
-    return this.Main.getServiceByName(renderApiKey,serviceName)
+  async GetOneService(
+    @Req()req:any,
+    @Body()Data:{serviceName:string}):Promise<any>{
+
+    const {serviceName} ={...Data}
+    return this.Main.getServiceByName(req.user.apikey,serviceName)
 }
+
+
 @Get('/Unhealthy')
-async UnhealthyService():Promise<any>{
-const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
-
-const result= await this.Main.listUnhealthyServices(renderApiKey)
-
+async UnhealthyService( @Req()req:any):Promise<any>{
+const result= await this.Main.listUnhealthyServices(req.user.apikey)
 return result
 }
 @Get('/Overview')
-async Getoverview():Promise<any>{
-  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
-  const result=await this.Main.getServiceOverview(renderApiKey)
+async Getoverview(@Req()req:any):Promise<any>{
+  const result=await this.Main.getServiceOverview(req.user.apikey)
   return result
 }
 @Post('/Redeploy')
-async Redploy(@Body() Data:{ServiceName:string}):Promise<any>{
-  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
+async Redploy(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
   const {ServiceName}={...Data}
-  const result=await this.Main.redeployService(renderApiKey,ServiceName)
+  const result=await this.Main.redeployService(req.user.apikey,ServiceName)
   return result;
 }
 @Post("/CreateMonitorLink")
-async CreateLink(@Body() Data:{ServiceName:string}):Promise<any>{
-  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y';
+async CreateLink(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
   const {ServiceName}={...Data}
-  const result=await this.Main.createUptimeService(renderApiKey,ServiceName)
+  const result=await this.Main.createUptimeService(req.user.apikey,ServiceName)
   return result
 }
 @Post('/Monitor/:token')

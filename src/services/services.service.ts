@@ -1,10 +1,15 @@
 import { Injectable,BadRequestException} from '@nestjs/common';
 import { setDefaultAutoSelectFamilyAttemptTimeout } from 'net';
 import { RenderClient } from 'src/render/render.client';
+import { DatabaseService } from 'src/database/database.service';
 @Injectable()
+
 export class ServicesService {
     
-constructor(private readonly client:RenderClient){}
+constructor(private readonly client:RenderClient,
+            private readonly DB:DatabaseService
+            
+){}
 
      // 1️⃣ List available Render services for the user
  async listAvailableServices(renderApiKey: string) {
@@ -89,8 +94,6 @@ async getServiceOverview(renderApiKey: string) {
     ),
   };
 }
-
-
   //This will Redeploy the service 
   async redeployService(renderApiKey: string, ServiceName: string) {
   if (!renderApiKey) {
