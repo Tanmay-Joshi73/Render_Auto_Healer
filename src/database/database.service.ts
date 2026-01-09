@@ -8,6 +8,7 @@ export class DatabaseService
   private pool: Pool;
 
   onModuleInit() {
+    
     this.pool = new Pool({
       connectionString: process.env.Origin_Url,
       ssl: {
@@ -19,6 +20,7 @@ export class DatabaseService
 
   async query<T = any>(text: string, params?: any[]): Promise<T[]> {
     const result = await this.pool.query(text, params);
+    
     return result.rows;
   }
 
