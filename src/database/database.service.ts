@@ -9,10 +9,11 @@ export class DatabaseService
 
   onModuleInit() {
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: process.env.Origin_Url,
       ssl: {
         rejectUnauthorized: false, // required for Supabase
       },
+      
     });
   }
 

@@ -9,7 +9,6 @@ export class RegisterController {
   @Post('/set')
   async Register(@Body()Data:registerdto):Promise<any>{
     const {token,username,password} ={...Data}
-    console.log(token)
     return this.registerService.Register(token,username,password);
   }
 }

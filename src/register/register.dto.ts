@@ -6,6 +6,6 @@ export class registerdto{
      username:string;
      @IsString()
      password:string
-     @IsEmail()
-     email:string
+    //  @IsEmail()
+    //  email:string
 }
