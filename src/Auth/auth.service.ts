@@ -27,6 +27,7 @@ constructor(private readonly Client:RenderClient,
        
         // first check weather current provided render api key is valid or not by returning all the services of render.com of that user
       services = await this.Client.verifyService(token);
+     
     } catch (err) {
       throw new BadRequestException('Invalid Render API key');
     }
@@ -43,7 +44,7 @@ constructor(private readonly Client:RenderClient,
 
         const user=await supa.query(
             `
-            INSERT INTO USERS(Name,Password,apiKey)
+            INSERT INTO USERS(Name,Password,auth_key,apiKey)
             VALUES($1,$2,$3,$4)
             `,
             [username,hashedPassword,authApiKey,token]
@@ -81,7 +82,7 @@ async Login(username: string, password: string) {
   // 1️⃣ Fetch user
   const users = await this.DB.query(
     `
-    SELECT id, password, api_key
+    SELECT id, password, apikey
     FROM users
     WHERE name = $1
     `,
@@ -109,15 +110,18 @@ async Login(username: string, password: string) {
 }
 
 
-async getAll(): Promise<any> {
+  //this will return all the users from the Db
+async getAll(): Promise<any[]> {
  const supa = await this.DB['pool'].connect();
 
   try {
     const res = await supa.query(`SELECT * FROM users`);
-    return res
+    // if(res.rows().length==0) throw 
+    
   } finally {
     supa.release();
   }
+  return []
 }
 
 }

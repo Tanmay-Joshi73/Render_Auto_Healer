@@ -6,6 +6,8 @@ import { inspect } from 'util';
 export class AuthGuard implements CanActivate {
     constructor(private readonly DB:DatabaseService){}
     async canActivate(context: ExecutionContext):  | Promise<boolean>  {
+        console.log("✅ AuthGuard HIT:", context.getClass().name, context.getHandler().name);
+    
         const request = context.switchToHttp().getRequest()
         const authHeader = request.headers['authorization'];
         if (!authHeader) {
@@ -21,7 +23,9 @@ export class AuthGuard implements CanActivate {
              WHERE auth_key=$1`,
              [token]
         )
+     
         if(user.length==0){throw new UnauthorizedException('Invalid Api Key')}
+       
         request.user=user[0]
         return true;
         

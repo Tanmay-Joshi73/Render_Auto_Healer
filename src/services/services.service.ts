@@ -83,7 +83,7 @@ export class ServicesService {
     }
 
     const services = await this.client.verifyService(renderApiKey);
-
+    console.log(services)
     if (!services) {
       throw new BadRequestException('Invalid Render API key');
     }

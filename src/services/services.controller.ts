@@ -9,10 +9,10 @@ import { Param } from '@nestjs/common';
 import { AuthGuard } from 'src/Auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { userInfo } from 'os';
+@UseGuards(AuthGuard)
 @Controller('services')
 export class ServicesController {
   constructor(private readonly Main: ServicesService) {}
-  // @UseGuards(AuthGuard)
    @Get('available')
   async getAvailableServices(@Req() req: any) {
     return this.Main.listAvailableServices(req.user.apikey);
