@@ -10,6 +10,7 @@ export class AuthController {
   @Post('/set')
   async Register(@Body()Data:registerdto):Promise<any>{
     const {token,username,password} ={...Data}
+    console.log(Data)
     return this.registerService.Register(token,username,password);
   }
   
@@ -18,5 +19,11 @@ export class AuthController {
   async Login(@Body()Data:login):Promise<any>{
     const {username,password} ={...Data}
     return this.registerService.Login(username,password);
+  }
+
+  @Get('/getAll')
+  async getAllUsers():Promise<any>{
+    const response= await this.registerService.getAll()
+    return response;
   }
 }

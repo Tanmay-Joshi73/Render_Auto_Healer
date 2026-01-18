@@ -107,4 +107,17 @@ async Login(username: string, password: string) {
     apiKey: user.api_key,
   };
 }
+
+
+async getAll(): Promise<any> {
+ const supa = await this.DB['pool'].connect();
+
+  try {
+    const res = await supa.query(`SELECT * FROM users`);
+    return res
+  } finally {
+    supa.release();
+  }
+}
+
 }
