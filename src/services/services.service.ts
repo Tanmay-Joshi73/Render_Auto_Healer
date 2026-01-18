@@ -4,7 +4,7 @@ import { RenderClient } from 'src/render/render.client';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from 'src/database/database.service';
 import { Type } from '@nestjs/common';
-import { error } from 'console';
+import { Console, error } from 'console';
 @Injectable()
 
 export class ServicesService {
@@ -128,7 +128,7 @@ export class ServicesService {
 
 
 
-  async createUptimeService(RenderApiKey: string, ServiceName: string) {
+  async createUptimeService(RenderApiKey: string, ServiceName: string,userId:string) {
    
     if (!ServiceName) {
       throw new BadRequestException('Service Name is required');
@@ -141,15 +141,15 @@ export class ServicesService {
 
     if (!service) throw new BadRequestException("Given service is now present ")
 
-    await supa.query('BEGIN')
-
-
-    // 2️⃣ Insert deployment
-    try{
+      
+      
+      // 2️⃣ Insert deployment
+      try{
+      await supa.query('BEGIN')
     // Before inserting check weather the current deploymen present in the system or not 
     const ExistingDeployment = await supa.query(
       `
-      SELECT * FROM deployment where name=$1 
+      SELECT * FROM deployment where Deployment_name=$1 
       `, [ServiceName]
     )
 
@@ -166,7 +166,9 @@ export class ServicesService {
 
 
     // THis will extract the data of the deployment;
-    deploymentRes.forEach((ele): any => {
+   
+    deploymentRes.rows.forEach((ele): any => {
+      
       deptId = ele.id;
 
     })
@@ -185,7 +187,7 @@ export class ServicesService {
     )
 
     let tokenId: string = '';
-    tokenRes.forEach((ele): any => {
+    tokenRes.rows.forEach((ele): any => {
       tokenId = ele.id;
     })
 
@@ -193,13 +195,21 @@ export class ServicesService {
     //Now the whole mapping table;
     const token_deployment = await supa.query(
       `
-      INSERT INTO token_deployment_mapping(dpet_id,token_id)
+      INSERT INTO token_deployment_mapping(dept_id,token_id)
       VALUES ($1,$2)
       RETURNING id
     `,
       [deptId, tokenId]
     )
 
+    ///Now insert the Data in the token_mapping table;
+    const user_token_mapping=await supa.query(
+      `
+      INSERT INTO users_token_mapping(user_id, token_id) VALUES ($1, $2);
+
+      `,
+      [userId,tokenId]
+    )
     ///Final stage i
       // s to commit all the data in to the database at a time
     await supa.query('COMMIT')
@@ -213,9 +223,11 @@ export class ServicesService {
   }
   catch(err){
     await supa.query('ROLLBACK')
+    throw err
   }
   finally{
-    await supa.query('RELEASE')
+  await  supa.release()
+
   }
 }
 
@@ -264,6 +276,42 @@ export class ServicesService {
     redeploy: redeployResult,
   };
 }
+
+
+
+
+  //This will Return the list of all WebHook created for that user
+  async getAllWebhookUrls(userId: string) {
+    console.log(userId)
+    const data = await this.DB.query(
+    `
+    SELECT 
+      t.token,
+      d.deployment_name,
+      d.type,
+      t.created_at
+    FROM users_token_mapping utm
+    JOIN token t
+      ON t.id = utm.token_id
+    JOIN token_deployment_mapping tdm
+      ON tdm.token_id = t.id
+    JOIN deployment d
+      ON d.id = tdm.dept_id
+    WHERE utm.user_id = $1
+    ORDER BY t.created_at DESC
+    `,
+    [userId],
+  );
+  
+  return data.map((row: any) => ({
+    token: row.token,
+    webhookUrl: `services/monitor/${row.token}`,
+    deploymentName: row.deployment_name,
+    type: row.type,
+    createdAt: row.created_at,
+  }));
+}
+
 
 
 }

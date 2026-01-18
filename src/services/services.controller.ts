@@ -45,9 +45,9 @@ async Redploy(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
 }
 @Post("/CreateMonitorLink")
 async CreateLink(@Body() Data:{ServiceName:string},@Req()req:any):Promise<any>{
-  const renderApiKey='rnd_BaJS28kbYltJDXlc7wrWXFs1gZ0Y'
+
   const {ServiceName}={...Data}
-  const result=await this.Main.createUptimeService(renderApiKey,ServiceName)
+  const result=await this.Main.createUptimeService(req.user.apikey,ServiceName,req.user.id)
   return result
 }
 @Post('/Monitor/:token')
@@ -57,6 +57,11 @@ const reuslt=await this.Main.Monitor(Token)
 return reuslt;
 
 }
+@Get('/monitor/all')
+  async getAllMonitors(@Req() req: any) {
+    // req.user injected by AuthGuard
+    return this.Main.getAllWebhookUrls(req.user.id);
+  }
 }
 
 
