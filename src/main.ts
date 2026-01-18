@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 const isProd = process.env.NODE_ENV === 'production';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-console.log(process.env.NODE_ENV)
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(

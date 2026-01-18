@@ -239,21 +239,22 @@ export class ServicesService {
     throw new BadRequestException('Token is required');
   }
 
+
   // ✅ Fetch deployment + render_api_key using mapping
   const result = await this.DB.query(
     `
     SELECT 
-      u.render_api_key,
+      u.apiKey,
       d.deployment_name
-    FROM tokens t
+    FROM token t
     JOIN users_token_mapping utm 
       ON utm.token_id = t.id
     JOIN users u 
       ON u.id = utm.user_id
     JOIN token_deployment_mapping tdm 
       ON tdm.token_id = t.id
-    JOIN deployments d 
-      ON d.id = tdm.deployment_id
+    JOIN deployment d 
+      ON d.id = tdm.dept_id
     WHERE t.token = $1
     LIMIT 1
     `,
@@ -266,8 +267,12 @@ export class ServicesService {
 
   const { render_api_key: renderApiKey, deployment_name: serviceName } = result[0];
 
+  
+  let data=result[0]  //this contain apiKey and DeploymentName
+  
+  
   // ✅ Redeploy
-  const redeployResult = await this.redeployService(renderApiKey, serviceName);
+  const redeployResult = await this.redeployService(data.apikey, data.deployment_name);
 
   return {
     status: true,
@@ -276,6 +281,9 @@ export class ServicesService {
     redeploy: redeployResult,
   };
 }
+
+
+
 
 
 
