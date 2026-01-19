@@ -48,9 +48,10 @@ async getWebServiceByName(
         (service: any) =>
           service.name.toLowerCase() === serviceName.toLowerCase() &&
           service.type === 'web_service' &&
-          service.suspended === 'not_suspended',
+          service.suspended === 'not_suspended' || 'suspended',
+          
       );
-
+      console.log(service)
     return service || null; // 🔥 FULL object
   } catch {
     return null;
@@ -59,9 +60,9 @@ async getWebServiceByName(
 
 
 
-///This function will call the render servicea and deploy it again 
-async redeployService(renderApiKey: string, serviceId: string) {
-    if (!renderApiKey) {
+///This function will call the render service and deploy it again 
+async redeployService(token: string, serviceId: string) {
+    if (!token) {
       throw new BadRequestException('API key is not provided');
     }
 
@@ -75,7 +76,7 @@ async redeployService(renderApiKey: string, serviceId: string) {
         {}, // body is empty for redeploy
         {
           headers: {
-            Authorization: `Bearer ${renderApiKey}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -89,6 +90,25 @@ async redeployService(renderApiKey: string, serviceId: string) {
     }
 
 }
+
+
+// core function which will start the service again which is suspended or stopped 
+async resumeService(token: string, serviceId: string) {
+    const res = await axios.post(
+      `https://api.render.com/v1/services${serviceId}/resume`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    console.log('before calling the Resume serviec funcion')
+    console.log(res)
+    return res.data;
+  }
 
 }
 

@@ -62,6 +62,18 @@ return reuslt;
     // req.user injected by AuthGuard
     return this.Main.getAllWebhookUrls(req.user.id);
   }
+
+   @Post('/resume')
+  async resumeService(
+    @Req() req: any,
+    @Body() body: { serviceName: string },
+  ) {
+    const {serviceName}={...body}
+    return this.Main.startSuspendedService(
+      req.user.apikey,
+      body.serviceName,
+    );
+  }
 }
 
 

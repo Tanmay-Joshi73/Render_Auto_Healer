@@ -45,11 +45,13 @@ export class ServicesService {
     if (!serviceName) {
       throw new BadRequestException('Service name is required');
     }
-
+    console.log('inside the getServiceName')
+    
     const service = await this.client.getWebServiceByName(
       renderApiKey,
       serviceName,
     );
+    
 
     if (!service) {
       throw new BadRequestException('Service with this name not found');
@@ -319,7 +321,19 @@ export class ServicesService {
     createdAt: row.created_at,
   }));
 }
+//This will resume the service which is suspended
+ async startSuspendedService(renderApiKey: string, serviceName: string) {
+    if (!renderApiKey) throw new BadRequestException('Render API key missing');
+    if (!serviceName) throw new BadRequestException('Service name is required');
 
+    console.log("inside the Start suspended function")
+    const service = await this.getServiceByName(renderApiKey, serviceName);
+    if (!service?.id) {
+      throw new BadRequestException('Service not found');
+    }
 
+    // ✅ Resume (start)
+    return this.client.resumeService(renderApiKey, service.id);
+  }
 
 }
